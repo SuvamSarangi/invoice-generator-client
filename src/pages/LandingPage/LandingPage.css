@@ -1,0 +1,13 @@
+#hero{
+   background-color: #3A7AFD;
+}
+
+
+.card-hover {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-8px);
+
+}
