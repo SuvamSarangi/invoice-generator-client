@@ -5,6 +5,7 @@ import toast from 'react-hot-toast';
 import { Plus, Pointer } from "lucide-react";
 import { formatDate } from '../util/formatInvoiceData';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@clerk/clerk-react';
 
 const DashBoard = () => {
 
@@ -12,11 +13,13 @@ const[invoices,setInvoices] = useState([]);
 
 const {baseUrl,setInvoiceData} = useContext(AppContext)
 const navigate = useNavigate();
+const {getToken} = useAuth();
 
 useEffect( () =>{ 
     const fetchInvoices = async()=>{
       try{
-        const response = await getAllInvoices(baseUrl);
+        const token = await getToken();
+        const response = await getAllInvoices(baseUrl,token);
         setInvoices(response.data);
       }catch(error){
         toast.error("Failed to load the invoices",error);

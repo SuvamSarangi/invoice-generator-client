@@ -1,8 +1,11 @@
 import React from "react";
 import "./LandingPage.css";
 import {assets} from '../../assets/assets.js';
+import { useNavigate } from "react-router-dom";
+
 
 const LandingPage = () => {
+    const navigate = useNavigate();
   return (
     <>
       <header id="hero" className="hero-section text-white text-center">
@@ -22,7 +25,7 @@ const LandingPage = () => {
               </p>
 
               <p>
-                <button className="btn btn-lg btn-warning fw-bold rounded-pill my-2 mx-1 px-5 py-3">
+                <button className="btn btn-lg btn-warning fw-bold rounded-pill my-2 mx-1 px-5 py-3" onClick={() => navigate("/generate")}>
                   Generate your first invoice
                 </button>
                 <a

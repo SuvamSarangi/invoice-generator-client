@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import InvoicePreview from "../components/InvoicePreview";
 import { AppContext } from "../context/AppContext";
 import { deleteInvoice, saveInvoice, sendInvoice } from "../service/invoiceService";
@@ -9,10 +9,11 @@ import html2canvas from "html2canvas";
 import { uploadInvoiceThumbnail } from "../service/cloudinaryService";
 import { generatePdfFormatElement } from "../util/pdfUtils";
 
+
 const PreviewPage = () => {
   const previewRef = useRef();
 
-  const { invoiceData, baseUrl, setInvoiceData } = useContext(AppContext);
+  const {invoiceData, baseUrl, setInvoiceData } = useContext(AppContext);
   const [loading, setLoading] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const [showModel, setShowModel] = useState(false);
@@ -20,12 +21,13 @@ const PreviewPage = () => {
   const [emailing,setEmailing]= useState(false);
   const navigate = useNavigate();
 
+
   // save the invoice
   const handleSave = async () => {
     try {
       setLoading(true);
 
-      //  take the screen short of the full invoice
+      // take the screen short of the full invoice
       const canvas = await html2canvas(previewRef.current, {
         scale: 2,
         useCORS: true,
@@ -39,6 +41,8 @@ const PreviewPage = () => {
         ...invoiceData,
         thumbnailUrl,
       };
+
+
       console.log("Payload after sending:", payload);
       const response = await saveInvoice(baseUrl, payload);
       if (response.status === 200) {
@@ -58,6 +62,7 @@ const PreviewPage = () => {
   // delete the invoice
   const handleDelete = async () => {
     try {
+ 
       const response = await deleteInvoice(baseUrl, invoiceData.id);
       if (response.status === 204) {
         toast.success("Invoice deleted successfully");
@@ -100,6 +105,7 @@ const PreviewPage = () => {
       const formData = new FormData();
       formData.append("file",pdfBlob);
       formData.append("email",customerEmail);
+      // const token = await getToken({ template: "backend_api" });
       const response =  await sendInvoice(baseUrl,formData);
       if(response.status === 200){
         toast.success("Email sending successfully");
@@ -115,6 +121,14 @@ const PreviewPage = () => {
     }
  
   }
+
+
+  useEffect(()=>{
+    if(!invoiceData || !invoiceData.items?.length){
+      toast.error("invoice data is empty");
+      navigate("/dashboard");
+    }
+  },[invoiceData,navigate]);
 
   return (
     <div className="previewpage container-fluid d-flex flex-column p-3 min-vh-100">
