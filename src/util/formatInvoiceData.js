@@ -1,6 +1,6 @@
-export const formatInvoiceData = (invoiceData) => {
+export const formatInvoiceData = (invoiceData = {}) => {
   const {
-    title = {},
+    title = "",
     billing = {},
     shipping = {},
     invoice = {},
@@ -10,56 +10,60 @@ export const formatInvoiceData = (invoiceData) => {
     notes = "",
     items = [],
     logo = "",
-  } = invoiceData || {};
+  } = invoiceData;
 
   const currencySymbol = "₹";
-  const subtotal = items.reduce((acc, item) => acc + item.qty * item.amount, 0);
-  const taxAmount = subtotal * (tax / 100);
+  const subtotal = (items || []).reduce(
+    (acc, item) => acc + (Number(item?.qty) || 0) * (Number(item?.amount) || 0),
+    0
+  );
+  const taxAmount = subtotal * (Number(tax) / 100);
   const total = subtotal + taxAmount;
 
   return {
-    title,
-    companyName: company.name,
-    companyAddress: company.address,
-    companyPhone: company.phone,
-    companyLogo: logo,
+    title: title || "Untitled Invoice",
 
-    invoiceNumber: invoice.number,
-    invoiceDate: invoice.date,
-    paymentDate: invoice.dueDate,
+    companyName: company?.name || "",
+    companyAddress: company?.address || "",
+    companyPhone: company?.phone || "",
+    companyLogo: logo || "",
 
-    accountName: account.name,
-    accountNumber: account.number,
-    accountIfscCode: account.ifscCode,
+    invoiceNumber: invoice?.number || "",
+    invoiceDate: invoice?.date || "",
+    paymentDate: invoice?.dueDate || "",
 
-    billingName: billing.name,
-    billingAddress: billing.address,
-    billingPhone: billing.phone,
+    accountName: account?.name || "",
+    accountNumber: account?.number || "",
+    accountIfscCode: account?.ifscCode || "",
 
-    shippingName: shipping.name,
-    shippingAddress: shipping.address,
-    shippingPhone: shipping.phone,
+    billingName: billing?.name || "",
+    billingAddress: billing?.address || "",
+    billingPhone: billing?.phone || "",
+
+    shippingName: shipping?.name || "",
+    shippingAddress: shipping?.address || "",
+    shippingPhone: shipping?.phone || "",
 
     currencySymbol,
-    tax,
-    items,
-    notes,
+    tax: Number(tax) || 0,
+     items: (items || []).map(item => ({
+      name: item?.name || "",
+      qty: Number(item?.qty) || 0,
+      amount: Number(item?.amount) || 0,
+      description: item?.description || "",
+    })),
+    notes: notes || "",
     subtotal,
     taxAmount,
-    total
-
+    total,
   };
 };
 
-export const formatDate = (dateString) =>{
-if(!dateString) return "N/A";
-
-const date = new Date(dateString);
-
-date.toLocaleDateString("en-GB",{
-  day: "2-digit",
-  month: "short",
-  year: "numeric",
-})
-
+export const formatDate = (dateString) => {
+  if (!dateString) return "N/A";
+  return new Date(dateString).toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
 };
